@@ -1,1 +1,99 @@
-﻿<h2>title</h2>
+﻿@model User
+
+@{
+    ViewBag.Title = "Main page";
+}
+
+<div class="mt-4 bg-dark text-white p-3 rounded-3 d-flex align-items-center">
+    <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#topUpAccount"><i class="fa-solid fa-piggy-bank bright-green"></i> Пополнить счёт</button>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <button type="button" class="btn btn-outline-light ms-3" data-bs-toggle="modal" data-bs-target="#transferOfFunds"><i class="fa-solid fa-money-bill-transfer bright-green"></i> Перевод средств</button>
+        <h4 class="mb-0 ms-auto"><i class="fa-regular fa-credit-card HHL"></i> @ViewBag.Balance</h4>
+    }
+</div>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" id="error-message">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="modal fade" id="topUpAccount" tabindex="-1" aria-labelledby="#topUpAccountLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title me-2 fs-5" id="#topUpAccountLabel"><i class="fa-solid fa-credit-card"></i> Пополнение счёта</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <form id="topUpBalanceForm" class="d-flex flex-column align-items-center">
+                    <div asp-validation-summary="All" class="text-error"></div>
+                    <input class="form-control w-75" type="text" name="UniqueNumber" placeholder="Укажите номер счёта..." required>
+                    <input class="form-control mt-2 w-75" type="number" name="Amount" placeholder="Укажите сумму пополнения..." required min="1">
+                    <button type="submit" class="btn btn-outline-light mt-3 w-50">Подтвердить</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="transferOfFunds" tabindex="-1" aria-labelledby="#transferOfFundsLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title me-2 fs-5" id="#transferOfFundsLabel"><i class="fa-regular fa-money-bill-1"></i> Перевод средств</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <form class="d-flex flex-column align-items-center" asp-action="TransferOfFunds" asp-controller="Transaction" method="post">
+                    <div asp-validation-summary="All" class="text-error"></div>
+                    <input class="form-control w-75" type="text" name="UniqueNumber" placeholder="Укажите номер счёта..." required>
+                    <input class="form-control mt-2 w-75" type="number" name="Amount" placeholder="Укажите сумму перевода..." required min="1">
+                    <button type="submit" class="btn btn-outline-light mt-3 w-50"><i class="fa-solid fa-hand-holding-dollar"></i> Подтвердить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const errorMessage = document.getElementById("error-message");
+            if (errorMessage) {
+                setTimeout(() => {
+                    errorMessage.style.transition = "opacity 0.5s ease";
+                    errorMessage.style.opacity = "0";
+                    setTimeout(() => errorMessage.remove(), 500);
+                }, 2345);
+            }
+        });
+
+        $(document).ready(function () {
+            $("#topUpAccount form").on("submit", function (e) {
+                e.preventDefault();
+                const formData = $(this).serialize();
+                $.post("/Transaction/TopUpBalance", formData, function (response) {
+                    if (response.success) {
+                        $("#topUpAccount").modal("hide");
+                        $(".alert-danger").remove();
+                        const updatedBalanceHtml = `
+                            <h4 class="mb-0 ms-auto">
+                                <i class="fa-regular fa-credit-card HHL"></i> ${response.newBalance}
+                            </h4>`;
+                        $("h4.mb-0.ms-auto").replaceWith(updatedBalanceHtml);
+                    } else {
+                        $(".alert-danger").remove();
+                        const errorHtml = `<div class="alert alert-danger">${response.errorMessage}</div>`;
+                        $("#topUpAccount .modal-body").prepend(errorHtml);
+                    }
+                }).fail(function () {
+                    alert("Возникла ошибка при выполнении запроса :с");
+                });
+            });
+        });
+    </script>
+}

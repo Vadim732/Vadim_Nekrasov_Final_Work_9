@@ -1,0 +1,67 @@
+﻿@model IEnumerable<ElectronicWallet.ViewModels.TransactionViewModel>
+
+@{
+    ViewBag.Title = "Список транзакций";
+}
+
+<div class="d-flex justify-content-end mt-3">
+    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#transactionFiltering"><i class="fa-solid fa-sliders bright-green"></i> Фильтрация транзакций</button>
+</div>
+
+<div class="mt-2">
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="mt-3">
+            @if (Model != null && Model.Any())
+            {
+                <table class="table table-striped">
+                    <thead class="table-dark">
+                    <tr>
+                        <th><i class="fa-solid fa-calendar-days HHL"></i> Дата</th>
+                        <th><i class="fa-regular fa-credit-card HHL"></i> Тип</th>
+                        <th><i class="fa-solid fa-user HHL"></i> Контрагент</th>
+                        <th><i class="fa-solid fa-money-bill-wave HHL"></i> Сумма</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var transaction in Model)
+                    {
+                        <tr>
+                            <td>@transaction.DateTransaction.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@transaction.Type</td>
+                            <td>@transaction.Counterparty</td>
+                            <td class="@(transaction.Amount < 0 ? "text-danger" : "text-success")">
+                                <strong>@transaction.Amount</strong>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <h2 class="text-center mt-3">К сожалению ещё <strong class="HHL">нет</strong> транзакций для отображения <i class="fa-regular fa-face-grin-beam-sweat HHL"></i></h2>
+            }
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="transactionFiltering" tabindex="-1" aria-labelledby="#transactionFilteringLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title ml-1 fs-5" id="#transactionFilteringLabel"><i class="fa-solid fa-list-check"></i> Фильтрация транзакций</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <form class="d-flex flex-column align-items-center" asp-action="ListOfTransactions" asp-controller="Transaction" method="get">
+                    <p>По дате (от)</p>
+                    <input class="form-control w-75" type="date" name="dateFrom" required>
+                    <p class="mt-3">По дате (до)</p>
+                    <input class="form-control w-75" type="date" name="dateTo" required min="1">
+                    <button type="submit" class="btn btn-outline-light mt-4 w-50"><i class="fa-solid fa-magnifying-glass"></i> Фильтравать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

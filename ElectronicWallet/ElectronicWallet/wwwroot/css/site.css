@@ -20,3 +20,75 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.text-error {
+  color: #ff1c1c;
+}
+
+.avatar-block{
+  width: 9.8em;
+  height: 9.8em;
+}
+
+.ml-1{
+  margin-left: 0.8em;
+}
+
+.mr-1 {
+  margin-right: 1.2em;
+}
+
+.avatar-block{
+  width: 9.8em;
+  height: 9.8em;
+}
+
+.theme-text-1 {
+  color: #b6effb;
+}
+
+.ml-1{
+  margin-left: 0.8em;
+}
+
+.pa-1 {
+  padding: 1.2em 2.4em;
+  border-radius: 2% 2%;
+}
+
+.border-radius-1{
+  border-radius: 1.4em;
+}
+
+.comment-user-avatar{
+  width: 1.9em;
+  height: 1.9em;
+}
+
+.ml-2 {
+  margin-left: 1.4em;
+}
+
+.HHL {
+  color: #f55262;
+}
+
+.bg-card {
+  background-color: #f55262;
+}
+
+.time-card {
+  color: #b4b4b4;
+}
+
+.filt-inp {
+  width: auto;
+}
+
+.ml-3 {
+  margin-left: 30%;
+}
+
+.bright-green {
+  color: #63ffcc;
+}

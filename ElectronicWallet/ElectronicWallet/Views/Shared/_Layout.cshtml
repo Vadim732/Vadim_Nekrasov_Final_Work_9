@@ -20,7 +20,12 @@
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item ml-2">
+                            <a class="btn btn-light nav-link text-dark" asp-action="ListOfTransactions" asp-controller="Transaction"><i class="fa-solid fa-table-list HHL"></i> Список <strong class="HHL">транзакций</strong></a>
+                        </li>
+                    }
                 </ul>
                 <ul class="navbar-nav d-flex">
                     @if (User.Identity.IsAuthenticated)
