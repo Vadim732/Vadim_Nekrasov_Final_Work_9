@@ -38,5 +38,12 @@ public class WalletContext : IdentityDbContext<User, IdentityRole<int>, int>
             .WithMany()
             .HasForeignKey(t => t.CounterpartyId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<ServiceProvider>().HasData(
+            new ServiceProvider { Id = 1, Name = "Интернет-провайдер", AccountDetails = "111222333" },
+            new ServiceProvider { Id = 2, Name = "Мобильный оператор", AccountDetails = "444555666" },
+            new ServiceProvider { Id = 3, Name = "Энергоснабжение", AccountDetails = "777888999" },
+            new ServiceProvider { Id = 4, Name = "Налог на воздух", AccountDetails = "123456789" }
+        );
     }
 }

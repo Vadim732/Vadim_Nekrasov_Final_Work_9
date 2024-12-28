@@ -1,0 +1,90 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<ElectronicWallet.Models.ServiceProvider>
+@inject UserManager<ElectronicWallet.Models.User> UserManager;
+@inject WalletContext DbContext;
+
+@{
+    ViewBag.Title = "Поставщики услуг";
+    var user = UserManager.GetUserAsync(User).Result;
+    var userWallet = DbContext.Wallets.FirstOrDefault(w => w.UserId == user.Id);
+    var subscribedProviders = DbContext.Payments.Where(p => p.WalletId == userWallet.Id).Select(p => p.ServiceProviderId).ToList();
+}
+
+<div class="bg-dark text-center pt-5 pb-4 border-radius-1">
+    <h3 class="text-white mb-5"><i class="fa-solid fa-file-invoice-dollar bright-green"></i> Заполните форму для оплаты услуги поставщика</h3>
+    <form id="payment-form" class="text-white d-flex flex-column align-items-center">
+        <div class="form-group w-50">
+            <label for="serviceProviderId"><i class="fa-solid fa-user-tie HHL"></i> Укажите поставщика</label>
+            <select id="serviceProviderId" class="form-control">
+                @foreach (var provider in Model)
+                {
+                    <option value="@provider.Id">@provider.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group w-50 mt-3">
+            <label for="accountDetails"><i class="fa-solid fa-file-invoice HHL"></i> Номер счета поставщика</label>
+            <input type="text" id="accountDetails" class="form-control" placeholder="Укажите номер счета..." required />
+        </div>
+        <div class="form-group w-50 mt-3">
+            <label for="amount"><i class="fa-solid fa-money-bills HHL"></i> Сумма оплаты</label>
+            <input type="number" id="amount" class="form-control" placeholder="Укажите сумму оплаты..." required />
+        </div>
+        <button type="submit" class="btn btn-outline-light bright-green mt-3">Подтвердить оплату</button>
+    </form>
+</div>
+
+<div class="row mt-3 d-flex justify-content-center" style="gap: 0.6em;">
+    @foreach (var provider in Model)
+    {
+        var isSubscribed = subscribedProviders.Contains(provider.Id);
+        <div class="card bg-dark text-white" style="width: 20rem;">
+            <img src="https://4pole.ru/wp-content/uploads/2020/02/strukturirovannaya-voda-kovalkova-za-1-min-vityaz.jpg" class="card-img-top border-radius-1 mt-2" alt="Supplier image">
+            <div class="card-body">
+                <h5 class="HHL">>@provider.Name</h5>
+                <p class="card-text">Cчёт: @provider.AccountDetails</p>
+                <form method="post" asp-action="SubscriptionToService" asp-controller="Transaction">
+                    <input type="hidden" name="serviceProviderId" value="@provider.Id" />
+                    <button type="submit" class="btn btn-outline-light bright-green ml-1">Подписаться</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#payment-form').on('submit', function (event) {
+            event.preventDefault();
+            const serviceProviderId = $('#serviceProviderId').val();
+            const accountDetails = $('#accountDetails').val();
+            const amount = parseInt($('#amount').val(), 10);
+            if (isNaN(amount) || amount <= 0) {
+                alert("Введите корректную сумму!");
+                return;
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/Transaction/PayService',
+                contentType: "application/x-www-form-urlencoded",
+                data: {
+                    serviceProviderId: serviceProviderId,
+                    accountDetails: accountDetails,
+                    amount: amount
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message + " баланс: " + response.newBalance);
+                        $('#payment-form')[0].reset();
+                    } else {
+                        alert(response.errorMessage);
+                    }
+                },
+                error: function () {
+                    alert("Возникла ошибка при оплате услуги :с");
+                }
+            });
+        });
+    });
+</script>

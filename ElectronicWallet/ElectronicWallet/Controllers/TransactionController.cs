@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 
 namespace ElectronicWallet.Controllers;
 
@@ -162,5 +161,52 @@ public class TransactionController : Controller
         }).ToList();
 
         return View(transactionModels);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> SupplierServices()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var serviceProviders = await _context.ServiceProviders.ToListAsync();
+        var wallet = await _context.Wallets.FirstOrDefaultAsync(w => w.UserId == user.Id);
+        var subscribedProviders = await _context.Payments.Where(p => p.WalletId == wallet.Id).Select(p => p.ServiceProviderId).ToListAsync();
+
+        ViewBag.SubscribedProviders = subscribedProviders;
+        return View(serviceProviders);
+    }
+    
+    [HttpPatch]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SubscriptionToService(int serviceProviderId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var wallet = await _context.Wallets.FirstOrDefaultAsync(w => w.UserId == user.Id);
+        var serviceProvider = await _context.ServiceProviders.FindAsync(serviceProviderId);
+        if (serviceProvider == null)
+        {
+            TempData["Error"] = "Ошибка: Поставщик не найден :с";
+            return RedirectToAction("SupplierServices");
+        }
+
+        bool alreadySubscribed = await _context.Payments.AnyAsync(p => p.WalletId == wallet.Id && p.ServiceProviderId == serviceProviderId);
+        if (alreadySubscribed)
+        {
+            TempData["Error"] = "Нельзя подписаться на поставщика дважды!.";
+            return RedirectToAction("SupplierServices");
+        }
+
+        var payment = new Payment
+        {
+            WalletId = wallet.Id,
+            ServiceProviderId = serviceProviderId,
+            Amount = 0,
+            DatePayment = DateTime.UtcNow
+        };
+
+        _context.Payments.Add(payment);
+        await _context.SaveChangesAsync();
+        return RedirectToAction("SupplierServices");
     }
 }
