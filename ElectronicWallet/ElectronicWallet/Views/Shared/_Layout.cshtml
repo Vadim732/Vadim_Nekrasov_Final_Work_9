@@ -25,6 +25,9 @@
                 <ul class="navbar-nav d-flex">
                     @if (User.Identity.IsAuthenticated)
                     {
+                        <li class="nav-item ml-1">
+                            <a class="btn btn-light nav-link text-dark" href="@Url.Action("Profile", "Account", new { userId = @ViewBag.currentUserId })"><i class="fa-solid fa-user"></i> Профиль</a>
+                        </li>
                         <li class="nav-item mr-1 ml-1">
                             <a class="btn btn-danger nav-link text-white" asp-controller="Account" asp-action="Logout"><i class="fa-solid fa-door-open"></i> Выйти</a>
                         </li>

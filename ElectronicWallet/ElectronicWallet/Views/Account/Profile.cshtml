@@ -1,0 +1,32 @@
+﻿@model User
+
+@{
+    ViewBag.Title = "User profile";
+}
+
+<div class="mt-4 bg-dark text-white pt-3 pb-3 border-radius-1">
+    <div class="row align-items-center">
+        <div class="col-md-3 text-center">
+            <img src="@Model.Avatar" class="img-thumbnail avatar-block rounded-circle" alt="User avatar">
+        </div>
+        <div class="col-md-9">
+            <div class="d-flex align-items-center mb-2">
+                <h2 class="me-3">@Model.UserName</h2>
+                @if (Model.Id != 1)
+                {
+                    <a asp-action="Edit" asp-controller="Account" asp-route-userId="@ViewBag.currentUserId" class="btn btn-outline-light ml-1"><i class="fa-solid fa-user-pen"></i> Редактировать</a>
+                }
+            </div>
+            <h6 class="text-muted"><i class="fa-solid fa-calendar-days"></i> @Model.DateOfBirth.ToString("dd.MM.yyyy")</h6>
+            <h6 class="mt-3"><i class="fa-solid fa-coins"></i> Номер счёта: <strong class="HHL">@Model.UniqueNumber</strong></h6>
+            <h6 class="mt-2"><i class="fa-solid fa-wallet"></i> Баланс: <strong class="bright-green">@ViewBag.Balance</strong></h6>
+            @if (User.IsInRole("admin"))
+            {
+                <div class="mt-4 mb-2">
+                    <a class="btn btn-outline-light" asp-controller="Account" asp-action="RegisterUser"><i class="fa-solid fa-user-plus"></i> Создать пользователя</a>
+                    <a class="btn btn-outline-light ml-1" asp-controller="Account" asp-action="Index"><i class="fa-solid fa-users"></i> Все пользователи</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
