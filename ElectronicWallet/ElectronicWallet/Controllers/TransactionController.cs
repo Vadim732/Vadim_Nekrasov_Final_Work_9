@@ -69,37 +69,33 @@ public class TransactionController : Controller
 
         return Json(new { success = true, newBalance = wallet.Balance });
     }
-
+    
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> TransferOfFunds(int UniqueNumber, int Amount)
     {
         if (Amount <= 0)
         {
-            ModelState.AddModelError("", "Сумма перевода должна быть больше нуля.");
-            return RedirectToAction("Index");
+            return Json(new { success = false, errorMessage = "Сумма перевода должна быть больше нуля." });
         }
 
         var currentUser = await _userManager.GetUserAsync(User);
         if (currentUser == null)
         {
-            TempData["ErrorMessage"] = "Ошибка: Как ты собрался совершать перевод, если не авторизован?";
-            return RedirectToAction("Index");
+            return Json(new { success = false, errorMessage = "Вы должны быть авторизованы для выполнения перевода." });
         }
 
         var senderWallet = await _context.Wallets.FirstOrDefaultAsync(w => w.UserId == currentUser.Id);
-        if (senderWallet.Balance < Amount)
+        if (senderWallet == null || senderWallet.Balance < Amount)
         {
-            TempData["ErrorMessage"] = "Недостаточно средств для перевода.";
-            return RedirectToAction("Index");
+            return Json(new { success = false, errorMessage = "Недостаточно средств для перевода." });
         }
 
         var recipientUser = await _context.Users.Include(u => u.Wallets)
             .FirstOrDefaultAsync(u => u.UniqueNumber == UniqueNumber);
         if (recipientUser == null)
         {
-            TempData["ErrorMessage"] = "Пользователь с указанным номером не найден.";
-            return RedirectToAction("Index");
+            return Json(new { success = false, errorMessage = "Пользователь с указанным номером не найден." });
         }
 
         var recipientWallet = recipientUser.Wallets.FirstOrDefault();
@@ -126,7 +122,8 @@ public class TransactionController : Controller
 
         _context.Transactions.AddRange(senderTransaction, recipientTransaction);
         await _context.SaveChangesAsync();
-        return RedirectToAction("Index");
+
+        return Json(new { success = true, newBalance = senderWallet.Balance });
     }
 
     [HttpGet]

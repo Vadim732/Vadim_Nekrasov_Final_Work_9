@@ -71,7 +71,7 @@
                 }, 2345);
             }
         });
-
+        
         $(document).ready(function () {
             $("#topUpAccount form").on("submit", function (e) {
                 e.preventDefault();
@@ -86,14 +86,33 @@
                             </h4>`;
                         $("h4.mb-0.ms-auto").replaceWith(updatedBalanceHtml);
                     } else {
-                        $(".alert-danger").remove();
-                        const errorHtml = `<div class="alert alert-danger">${response.errorMessage}</div>`;
-                        $("#topUpAccount .modal-body").prepend(errorHtml);
+                        $("#topUpAccount .modal-body").prepend(`
+                            <div class="alert alert-danger">${response.errorMessage}</div>
+                        `);
                     }
-                }).fail(function () {
-                    alert("Возникла ошибка при выполнении запроса :с");
+                });
+            });
+
+            $("#transferOfFunds form").on("submit", function (e) {
+                e.preventDefault();
+                const formData = $(this).serialize();
+                $.post("/Transaction/TransferOfFunds", formData, function (response) {
+                    if (response.success) {
+                        $("#transferOfFunds").modal("hide");
+                        $(".alert-danger").remove();
+                        const updatedBalanceHtml = `
+                            <h4 class="mb-0 ms-auto">
+                                <i class="fa-regular fa-credit-card HHL"></i> ${response.newBalance}
+                            </h4>`;
+                        $("h4.mb-0.ms-auto").replaceWith(updatedBalanceHtml);
+                    } else {
+                        $("#transferOfFunds .modal-body").prepend(`
+                            <div class="alert alert-danger">${response.errorMessage}</div>
+                        `);
+                    }
                 });
             });
         });
     </script>
 }
+
