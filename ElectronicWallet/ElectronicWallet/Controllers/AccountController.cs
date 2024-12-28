@@ -114,6 +114,7 @@ public class AccountController : Controller
                 UserName = model.UserName,
                 Email = model.Email,
                 Avatar = model.Avatar,
+                PhoneNumber = model.PhoneNumber,
                 DateOfBirth = model.DateOfBirth.ToUniversalTime(),
                 UniqueNumber = number
             };
@@ -302,6 +303,7 @@ public class AccountController : Controller
             UserName = model.UserName,
             Email = model.Email,
             Avatar = model.Avatar,
+            PhoneNumber = model.PhoneNumber,
             DateOfBirth = model.DateOfBirth.ToUniversalTime(),
             UniqueNumber = number
         };

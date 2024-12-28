@@ -37,6 +37,12 @@
             </label>
         </div>
         <div class="form_row mb-3">
+            <label for="" class="col-4">
+                <input type="text" class="form-control" asp-for="PhoneNumber" placeholder="Укажите ваш номер телефона...">
+                <span asp-validation-for="PhoneNumber" class="text-error" />
+            </label>
+        </div>
+        <div class="form_row mb-3">
             <label for="" class="col-4 position-relative">
                 <input type="password" id="password-input" class="form-control" asp-for="Password" placeholder="Введите пароль...">
                 <i id="toggle-password" class="fa-solid fa-eye position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>

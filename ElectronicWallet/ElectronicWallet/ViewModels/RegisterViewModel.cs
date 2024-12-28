@@ -11,6 +11,10 @@ public class RegisterViewModel
     [EmailAddress(ErrorMessage = "Неверный адрес электронной почты!")]
     public string Email { get; set; }
     
+    [Required(ErrorMessage = "Укажите номер телефона!")]
+    [RegularExpression(@"^(\+?\d{1,4}[\s-]?)?(\(?\d{2,5}\)?[\s-]?)?[\d\s-]{5,15}$", ErrorMessage = "Введите корректный номер телефона!")]
+    public string PhoneNumber { get; set; }
+    
     [Required(ErrorMessage = "Обязательно укажите дату вашего рождения!!")]
     public DateTime DateOfBirth { get; set; }
     

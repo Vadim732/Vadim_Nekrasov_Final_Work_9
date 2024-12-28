@@ -10,6 +10,7 @@ public class AdminInitializer
         string adminEmail = "admin@admin.admin";
         string adminUserName = "AdminAdminovich";
         string adminPassword = "Admin123$QwE";
+        string adminPhoneNumber = "996550000001";
         int adminUniqueNumber = 123456;
         string adminAvatar = "https://i.pinimg.com/736x/e3/e0/9b/e3e09bf6548359de5812e78a05adf964.jpg";
         DateTime adminDateOfBirth = new DateTime(2002, 2, 22).ToUniversalTime();
@@ -30,7 +31,8 @@ public class AdminInitializer
                 UserName = adminUserName,
                 Avatar = adminAvatar,
                 DateOfBirth = adminDateOfBirth,
-                UniqueNumber = adminUniqueNumber
+                UniqueNumber = adminUniqueNumber,
+                PhoneNumber = adminPhoneNumber
             };
             
             IdentityResult result = await _userManager.CreateAsync(admin, adminPassword);

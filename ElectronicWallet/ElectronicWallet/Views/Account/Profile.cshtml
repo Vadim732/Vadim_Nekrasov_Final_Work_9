@@ -18,6 +18,7 @@
                 }
             </div>
             <h6 class="text-muted"><i class="fa-solid fa-calendar-days"></i> @Model.DateOfBirth.ToString("dd.MM.yyyy")</h6>
+            <h6 class="text-muted"><i class="fa-solid fa-phone"></i> @Model.PhoneNumber</h6>
             <h6 class="mt-3"><i class="fa-solid fa-coins"></i> Номер счёта: <strong class="HHL">@Model.UniqueNumber</strong></h6>
             <h6 class="mt-2"><i class="fa-solid fa-wallet"></i> Баланс: <strong class="bright-green">@ViewBag.Balance</strong></h6>
             @if (User.IsInRole("admin"))

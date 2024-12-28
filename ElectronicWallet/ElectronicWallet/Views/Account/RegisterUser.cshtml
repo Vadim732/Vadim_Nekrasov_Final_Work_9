@@ -32,6 +32,12 @@
         </div>
         <div class="form_row mb-3">
             <label for="" class="col-4">
+                <input type="text" class="form-control" asp-for="PhoneNumber" placeholder="Укажите ваш номер телефона...">
+                <span asp-validation-for="PhoneNumber" class="text-error" />
+            </label>
+        </div>
+        <div class="form_row mb-3">
+            <label for="" class="col-4">
                 <input type="text" class="form-control" asp-for="Avatar" placeholder="Введите ссылку на аватар...">
                 <span asp-validation-for="Avatar" class="text-error" />
             </label>
