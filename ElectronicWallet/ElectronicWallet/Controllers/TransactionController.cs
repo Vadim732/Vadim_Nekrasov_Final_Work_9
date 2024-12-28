@@ -193,7 +193,7 @@ public class TransactionController : Controller
         bool alreadySubscribed = await _context.Payments.AnyAsync(p => p.WalletId == wallet.Id && p.ServiceProviderId == serviceProviderId);
         if (alreadySubscribed)
         {
-            TempData["Error"] = "Нельзя подписаться на поставщика дважды!.";
+            TempData["Error"] = "Нельзя подписаться на поставщика дважды!";
             return RedirectToAction("SupplierServices");
         }
 
